@@ -4,7 +4,7 @@ import { redirect } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_HOST,
+  baseURL: "https://api.mmsvn.com",
 });
 
 export const setAuthToken = (token) => {
@@ -18,30 +18,30 @@ export const setAuthToken = (token) => {
 export const refreshToken = async () => {
   const refresh_token = localStorage.getItem('refresh_token')
   try {
-    if(refresh_token){
-        const decodedToken = jwtDecode(refresh_token);
-        const currentTime = Date.now() / 1000;
-        if (decodedToken.exp < currentTime) {
-          window.location.replace(`/login`)
+    if (refresh_token) {
+      const decodedToken = jwtDecode(refresh_token);
+      const currentTime = Date.now() / 1000;
+      if (decodedToken.exp < currentTime) {
+        window.location.replace(`/login`)
+      }
+      const config = {
+        method: 'get',
+        url: `https://api.mmsvn.com/refresh`,
+        headers: {
+          'Authorization': refresh_token
         }
-        const config = {
-          method: 'get',
-          url: `${process.env.REACT_APP_API_HOST}/refresh`,
-          headers: { 
-            'Authorization': refresh_token
-          }
-        };
-        const response = await axios(config);
-        const token = response.data.new_access_token;
-        
-        if(response.data =="Mã không hợp lệ"){
-          window.location.replace(`/login`)
-        }
-        if(token && token != 'undefined'){
-          localStorage.setItem('token', token);
-          setAuthToken(token);
-        }
-        return token;
+      };
+      const response = await axios(config);
+      const token = response.data.new_access_token;
+
+      if (response.data == "Mã không hợp lệ") {
+        window.location.replace(`/login`)
+      }
+      if (token && token != 'undefined') {
+        localStorage.setItem('token', token);
+        setAuthToken(token);
+      }
+      return token;
     }
   } catch (error) {
     window.location.replace(`/login`)
@@ -52,11 +52,11 @@ export const refreshToken = async () => {
 export const login = async (id_user, pw) => {
   try {
     const response = await api.post('/account/login', { id_user, pw });
-    if(response.data.token){
-      const { token, refresh_token } = {token: response.data.token, refresh_token: response.data.refresh_token};
+    if (response.data.token) {
+      const { token, refresh_token } = { token: response.data.token, refresh_token: response.data.refresh_token };
       setAuthToken(token);
-      localStorage.setItem("user",response.data.user.id_user)
-      localStorage.setItem("name",response.data.user.name)
+      localStorage.setItem("user", response.data.user.id_user)
+      localStorage.setItem("name", response.data.user.name)
       localStorage.setItem('token', token);
       localStorage.setItem('refresh_token', refresh_token);
       return { token, refreshToken };
@@ -95,19 +95,19 @@ export const replaceBanner = async (id, file) => {
     const FormData = require('form-data');
     let data = new FormData();
     data.append('id_bn', id);
-    if(typeof file == 'object'){
+    if (typeof file == 'object') {
       data.append('image', file, Date.now());
-    }else{
+    } else {
       data.append('image', file);
     }
-    
-    if(checkTokenExpiration()){
+
+    if (checkTokenExpiration()) {
       const new_token = await refreshToken()
       api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.put('/banner/update',data);
+      const response = await api.put('/banner/update', data);
       return response.data;
-    }else{
-      const response = await api.put('/banner/update',data);
+    } else {
+      const response = await api.put('/banner/update', data);
       return response.data;
     }
   } catch (error) {
@@ -128,34 +128,34 @@ export const getAboutUs = async () => {
     throw error;
   }
 };
-export const updateAboutUs = async (content,content_en,image1,image2,image3) => {
+export const updateAboutUs = async (content, content_en, image1, image2, image3) => {
   try {
     const FormData = require('form-data');
     let data = new FormData();
     data.append('content', content);
     data.append('content_en', content_en);
-    if(typeof image1 == 'object' && image1?.name){
+    if (typeof image1 == 'object' && image1?.name) {
       data.append('image1', image1, Date.now());
-    }else{
+    } else {
       data.append('image1', image1);
     }
-    if(typeof image2 == 'object' && image2?.name){
+    if (typeof image2 == 'object' && image2?.name) {
       data.append('image2', image2, Date.now());
-    }else{
+    } else {
       data.append('image2', image2);
     }
-    if(typeof image3 == 'object' && image3?.name){
+    if (typeof image3 == 'object' && image3?.name) {
       data.append('image3', image3, Date.now());
-    }else{
+    } else {
       data.append('image3', image3);
     }
-    if(checkTokenExpiration()){
+    if (checkTokenExpiration()) {
       const new_token = await refreshToken()
       api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.put(`/about/update`,data);
+      const response = await api.put(`/about/update`, data);
       return response.data;
-    }else{
-      const response = await api.put(`/about/update`,data);
+    } else {
+      const response = await api.put(`/about/update`, data);
       return response.data;
     }
   } catch (error) {
@@ -178,13 +178,13 @@ export const getCompanyInfo = async () => {
 };
 export const updateWebinf = async (data) => {
   try {
-    if(checkTokenExpiration()){
+    if (checkTokenExpiration()) {
       const new_token = await refreshToken()
       api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.put('/webinf/update',data);
+      const response = await api.put('/webinf/update', data);
       return response.data;
-    }else{
-      const response = await api.put('/webinf/update',data);
+    } else {
+      const response = await api.put('/webinf/update', data);
       return response.data;
     }
   } catch (error) {
@@ -211,21 +211,21 @@ export const addNewCustomer = async (name, image) => {
     const FormData = require('form-data');
     let data = new FormData();
     data.append('name', name);
-    if(typeof image == 'object' && image?.name){
+    if (typeof image == 'object' && image?.name) {
       data.append('image', image, Date.now());
-    }else{
+    } else {
       data.append('image', image);
     }
     data.append('name_en', '');
     data.append('detail', '');
     data.append('detail_en', '');
-    if(checkTokenExpiration){
+    if (checkTokenExpiration) {
       const new_token = await refreshToken()
       api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.post('/customer/add',data);
+      const response = await api.post('/customer/add', data);
       return response.data;
-    }else{
-      const response = await api.post('/customer/add',data);
+    } else {
+      const response = await api.post('/customer/add', data);
       return response.data;
     }
   } catch (error) {
@@ -237,28 +237,28 @@ export const addNewCustomer = async (name, image) => {
     throw error;
   }
 };
-export const updateCustomer =  async (id,name, image) => {
+export const updateCustomer = async (id, name, image) => {
   try {
     const FormData = require('form-data');
     let data = new FormData();
     data.append('id', id);
-    
+
     data.append('name', name);
-    if(typeof image == 'object'  && image?.name){
+    if (typeof image == 'object' && image?.name) {
       data.append('image', image, Date.now());
-    }else{
+    } else {
       data.append('image', image);
     }
     data.append('name_en', '');
     data.append('detail', '');
     data.append('detail_en', '');
-    if(checkTokenExpiration()){
+    if (checkTokenExpiration()) {
       const new_token = await refreshToken()
       api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.put('/customer/update',data);
+      const response = await api.put('/customer/update', data);
       return response.data;
-    }else{
-      const response = await api.put('/customer/update',data);
+    } else {
+      const response = await api.put('/customer/update', data);
       return response.data;
     }
   } catch (error) {
@@ -269,15 +269,15 @@ export const updateCustomer =  async (id,name, image) => {
     )
     throw error;
   }
-} 
-export const deleteCustomer = async (id)=>{
+}
+export const deleteCustomer = async (id) => {
   try {
-    if(checkTokenExpiration()){
+    if (checkTokenExpiration()) {
       const new_token = await refreshToken()
       api.defaults.headers.common['Authorization'] = `${new_token}`;
       const response = await api.delete(`/customer/delete/${id}`);
       return response.data;
-    }else{
+    } else {
       const response = await api.delete(`/customer/delete/${id}`);
       return response.data;
     }
@@ -307,20 +307,20 @@ export const updateProduct = async (id_product, name, des, des_en, image, id_gro
     data.append('des', des);
     data.append('name', name);
     data.append('des_en', des_en);
-    if(typeof image == 'object'  && image?.name){
+    if (typeof image == 'object' && image?.name) {
       data.append('image', image, Date.now());
-    }else{
+    } else {
       data.append('image', image);
     }
     data.append('id_group', id_group);
     data.append('brochure', brochure);
-    if(checkTokenExpiration()){
+    if (checkTokenExpiration()) {
       const new_token = await refreshToken()
       api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.put(`/product/update`,data);
+      const response = await api.put(`/product/update`, data);
       return response.data;
-    }else{
-      const response = await api.put(`/product/update`,data);
+    } else {
+      const response = await api.put(`/product/update`, data);
       return response.data;
     }
   } catch (error) {
@@ -334,7 +334,7 @@ export const updateProduct = async (id_product, name, des, des_en, image, id_gro
 };
 export const addProduct = async (name, des, des_en, image, id_group, brochure) => {
   try {
-    
+
     let id_user = localStorage.getItem("user")
     const FormData = require('form-data');
     let data = new FormData();
@@ -342,20 +342,20 @@ export const addProduct = async (name, des, des_en, image, id_group, brochure) =
     data.append('des', des);
     data.append('name', name);
     data.append('des_en', des_en);
-    if(typeof image == 'object'  && image?.name){
+    if (typeof image == 'object' && image?.name) {
       data.append('image', image, Date.now());
-    }else{
+    } else {
       data.append('image', image);
     }
     data.append('id_group', id_group);
     data.append('brochure', brochure);
-    if(checkTokenExpiration()){
+    if (checkTokenExpiration()) {
       const new_token = await refreshToken()
       api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.post(`/product/add`,data);
+      const response = await api.post(`/product/add`, data);
       return response.data;
-    }else{
-      const response = await api.post(`/product/add`,data);
+    } else {
+      const response = await api.post(`/product/add`, data);
       return response.data;
     }
   } catch (error) {
@@ -369,12 +369,12 @@ export const addProduct = async (name, des, des_en, image, id_group, brochure) =
 };
 export const deleteProduct = async (id) => {
   try {
-    if(checkTokenExpiration()){
+    if (checkTokenExpiration()) {
       const new_token = await refreshToken()
       api.defaults.headers.common['Authorization'] = `${new_token}`;
       const response = await api.delete(`/product/delete/${id}`);
       return response.data;
-    }else{
+    } else {
       const response = await api.delete(`/product/delete/${id}`);
       return response.data;
     }
@@ -404,22 +404,22 @@ export const addSubProduct = async (name, content, content_en, image, id_product
     let data = new FormData();
     data.append('id_user', id_user);
     data.append('content', content);
-    data.append('name', name  && image?.name);
+    data.append('name', name && image?.name);
     data.append('content_en', content_en);
-    if(typeof image == 'object'){
+    if (typeof image == 'object') {
       data.append('image', image, Date.now());
-    }else{
+    } else {
       data.append('image', image);
     }
     data.append('id_product', id_product);
-    
-    if(checkTokenExpiration()){
+
+    if (checkTokenExpiration()) {
       const new_token = await refreshToken()
       api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.post(`/sub/add`,data);
+      const response = await api.post(`/sub/add`, data);
       return response.data;
-    }else{
-      const response = await api.post(`/sub/add`,data);
+    } else {
+      const response = await api.post(`/sub/add`, data);
       return response.data;
     }
   } catch (error) {
@@ -441,20 +441,20 @@ export const updateSubProduct = async (id_sub, name, content, content_en, image,
     data.append('content', content);
     data.append('name', name);
     data.append('content_en', content_en);
-    if(typeof image == 'object'  && image?.name){
+    if (typeof image == 'object' && image?.name) {
       data.append('image', image, Date.now());
-    }else{
+    } else {
       data.append('image', image);
     }
     data.append('id_product', id_product);
-    
-    if(checkTokenExpiration()){
+
+    if (checkTokenExpiration()) {
       const new_token = await refreshToken()
       api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.put(`/sub/update`,data);
+      const response = await api.put(`/sub/update`, data);
       return response.data;
-    }else{
-      const response = await api.put(`/sub/update`,data);
+    } else {
+      const response = await api.put(`/sub/update`, data);
       return response.data;
     }
   } catch (error) {
@@ -468,12 +468,12 @@ export const updateSubProduct = async (id_sub, name, content, content_en, image,
 };
 export const deleteSubProduct = async (id) => {
   try {
-    if(checkTokenExpiration()){
+    if (checkTokenExpiration()) {
       const new_token = await refreshToken()
       api.defaults.headers.common['Authorization'] = `${new_token}`;
       const response = await api.delete(`/sub/delete/${id}`);
       return response.data;
-    }else{
+    } else {
       const response = await api.delete(`/sub/delete/${id}`);
       return response.data;
     }
@@ -506,7 +506,7 @@ export const getPostById = async (id) => {
   }
 };
 
-export const addNewPost = async (name,name_en, content, content_en, image) => {
+export const addNewPost = async (name, name_en, content, content_en, image) => {
   try {
     const id_user = localStorage.getItem('user')
     const author = localStorage.getItem('name')
@@ -516,20 +516,20 @@ export const addNewPost = async (name,name_en, content, content_en, image) => {
     data.append('name_en', name_en);
     data.append('content', content);
     data.append('content_en', content_en);
-    if(typeof image == 'object'  && image?.name){
+    if (typeof image == 'object' && image?.name) {
       data.append('image', image, Date.now());
-    }else{
+    } else {
       data.append('image', image);
     }
     data.append('author', author);
     data.append('id_user', id_user);
-    if(checkTokenExpiration()){
+    if (checkTokenExpiration()) {
       const new_token = await refreshToken()
       api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.post('/post/add',data);
+      const response = await api.post('/post/add', data);
       return response.data;
-    }else{
-      const response = await api.post('/post/add',data);
+    } else {
+      const response = await api.post('/post/add', data);
       return response.data;
     }
   } catch (error) {
@@ -541,16 +541,16 @@ export const addNewPost = async (name,name_en, content, content_en, image) => {
     throw error;
   }
 };
-export const updatePost =  async (id,name,name_en,content,content_en, image) => {
+export const updatePost = async (id, name, name_en, content, content_en, image) => {
   try {
     const id_user = localStorage.getItem('user')
     const author = localStorage.getItem('name')
     const FormData = require('form-data');
     let data = new FormData();
     data.append('id_post', id);
-    if(typeof image == 'object'  && image?.name){
+    if (typeof image == 'object' && image?.name) {
       data.append('image', image, Date.now());
-    }else{
+    } else {
       data.append('image', image);
     }
     data.append('name', name);
@@ -559,13 +559,13 @@ export const updatePost =  async (id,name,name_en,content,content_en, image) => 
     data.append('content_en', content_en);
     data.append('author', author);
     data.append('id_user', id_user);
-    if(checkTokenExpiration()){
+    if (checkTokenExpiration()) {
       const new_token = await refreshToken()
       api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.put('/post/update',data);
+      const response = await api.put('/post/update', data);
       return response.data;
-    }else{
-      const response = await api.put('/post/update',data);
+    } else {
+      const response = await api.put('/post/update', data);
       return response.data;
     }
   } catch (error) {
@@ -576,15 +576,15 @@ export const updatePost =  async (id,name,name_en,content,content_en, image) => 
     )
     throw error;
   }
-} 
-export const deletePost = async (id)=>{
+}
+export const deletePost = async (id) => {
   try {
-    if(checkTokenExpiration()){
+    if (checkTokenExpiration()) {
       const new_token = await refreshToken()
       api.defaults.headers.common['Authorization'] = `${new_token}`;
       const response = await api.delete(`/post/delete/${id}`);
       return response.data;
-    }else{
+    } else {
       const response = await api.delete(`/post/delete/${id}`);
       return response.data;
     }

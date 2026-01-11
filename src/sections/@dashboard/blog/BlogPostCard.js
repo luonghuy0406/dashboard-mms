@@ -59,64 +59,64 @@ export default function BlogPostCard({ post, index }) {
   const { id_post, image, name, cre_date } = post;
   return (
     <Grid item xs={12} sm={6} md={3}>
-      <Card sx={{borderRadius:'0px', boxShadow:'unset'}}>
-      <Link
-        to={`/dashboard/news/${id_post}`}
-      >
-        <Box position='relative'>
+      <Card sx={{ borderRadius: '0px', boxShadow: 'unset' }}>
+        <Link
+          to={`/dashboard/news/${id_post}`}
+        >
+          <Box position='relative'>
             <Box
-                sx={{
-                    width: '100%',
-                    height: {
-                        xs: '300px',
-                        md: '300px',
-                        lg: '250px'
-                    },
-                    backgroundImage: `linear-gradient(to top, #000000 0%, rgba(0, 0, 0, 0) 100%), url("${process.env.REACT_APP_API_HOST}/read_image/${image}")`,
-                    backgroundSize: 'cover',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'center',
-                    transition: 'transform .2s linear', // Define the transition outside the &:hover selector
-                    '&:hover': {
-                        transform: 'scale(1.2)'
-                    }
-                }}
+              sx={{
+                width: '100%',
+                height: {
+                  xs: '300px',
+                  md: '300px',
+                  lg: '250px'
+                },
+                backgroundImage: `linear-gradient(to top, #000000 0%, rgba(0, 0, 0, 0) 100%), url("https://api.mmsvn.com/read_image/${image}")`,
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
+                transition: 'transform .2s linear', // Define the transition outside the &:hover selector
+                '&:hover': {
+                  transform: 'scale(1.2)'
+                }
+              }}
             />
             <Box
-                    position='absolute'
-                    bottom={0}
-                    sx={{
-                        p:2,
-                        width:'100%'
-                    }}
-                >
-                    <Typography 
-                        sx={{
-                            color: 'white',
-                            fontSize:'13px',
-                            textDecoration:'none !important'
-                        }}
-                    >
-                        {fDate(cre_date)}
+              position='absolute'
+              bottom={0}
+              sx={{
+                p: 2,
+                width: '100%'
+              }}
+            >
+              <Typography
+                sx={{
+                  color: 'white',
+                  fontSize: '13px',
+                  textDecoration: 'none !important'
+                }}
+              >
+                {fDate(cre_date)}
 
-                    </Typography>
-                    <Typography 
-                        variant="h6"
-                        sx={{
-                            color: 'white',
-                            textDecoration:'none !important',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis', 
-                            textTransform: 'uppercase'
-                        }}
-                    >
-                        {name}
-                    </Typography>
+              </Typography>
+              <Typography
+                variant="h6"
+                sx={{
+                  color: 'white',
+                  textDecoration: 'none !important',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  textTransform: 'uppercase'
+                }}
+              >
+                {name}
+              </Typography>
             </Box>
-        </Box>
-      </Link>
-    </Card>
+          </Box>
+        </Link>
+      </Card>
     </Grid>
   );
 }
