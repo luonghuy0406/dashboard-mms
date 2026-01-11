@@ -597,3 +597,12 @@ export const deletePost = async (id) => {
     throw error;
   }
 }
+
+export const getProductGroups = async () => {
+  try {
+    const response = await api.get(`/group/list`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Stack,
@@ -12,28 +12,10 @@ import {
   Autocomplete
 } from '@mui/material';
 import EditorComponent from './EditorComponent';
-import { updateProduct } from 'src/api';
+import { updateProduct, getProductGroups } from 'src/api';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 
-const gr = [
-  {
-    value: 1,
-    label: 'Chocking Compound'
-  },
-  {
-    value: 2,
-    label: 'Auxiliary Machinery'
-  },
-  {
-    value: 3,
-    label: 'Viega Pipe & Fittings'
-  },
-  {
-    value: 4,
-    label: 'Viton/FKM rubber packing sheet'
-  }
-]
 export default function EditProduct({ subList, row, setOpen, setUpdate, update, handleDeleteProduct }) {
   const [name, setName] = useState(row.name)
   const [image, setImage] = useState(`https://api.mmsvn.com/read_image/${row.image}`)
@@ -41,6 +23,25 @@ export default function EditProduct({ subList, row, setOpen, setUpdate, update, 
   const [des_en, setDesEN] = useState(row.des_en)
   const [brochure, setBrochure] = useState(row.brochure)
   const [group, setGroup] = useState(row.id_group)
+  const [productGroups, setProductGroups] = useState([])
+
+  useEffect(() => {
+    async function fetchGroups() {
+      try {
+        const response = await getProductGroups();
+        if (response.results) {
+          const mappedGroups = response.results.map(g => ({
+            value: g.id_group,
+            label: g.name
+          }));
+          setProductGroups(mappedGroups);
+        }
+      } catch (error) {
+        console.error('Error fetching product groups:', error);
+      }
+    }
+    fetchGroups();
+  }, []);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -105,14 +106,11 @@ export default function EditProduct({ subList, row, setOpen, setUpdate, update, 
 
             <Autocomplete
               fullWidth
-              options={gr}
-              getOptionLabel={(option) => option.label}
+              options={productGroups}
+              getOptionLabel={(option) => option.label || ""}
+              value={productGroups.find(g => g.value === group) || null}
               onChange={(e, value) => {
-                setGroup(value.value)
-              }}
-              defaultValue={() => {
-                let a = ''
-                return a = gr.filter((pr) => { return pr.value == row.id_group })[0]
+                if (value) setGroup(value.value)
               }}
               renderInput={(params) => (
                 <TextField
