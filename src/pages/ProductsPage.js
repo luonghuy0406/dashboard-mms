@@ -52,11 +52,13 @@ export default function ProductsPage() {
             <Typography variant="h4" gutterBottom>
               Products
             </Typography>
-            <Link to="/dashboard/products/add">
-              <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-                New product
-              </Button>
-            </Link>
+            <Stack direction="row" spacing={2}>
+              <Link to="/dashboard/products/add" style={{ textDecoration: 'none' }}>
+                <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+                  New product
+                </Button>
+              </Link>
+            </Stack>
           </Stack>
           <Stack spacing={3} mb={5}>
             <ProductFilterSidebar products={productList} setProductListTemp={setProductListTemp} />
@@ -72,4 +74,6 @@ export default function ProductsPage() {
     </>
   );
 }
+
+
 

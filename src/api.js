@@ -367,6 +367,8 @@ export const addProduct = async (name, des, des_en, image, id_group, brochure) =
     throw error;
   }
 };
+
+
 export const deleteProduct = async (id) => {
   try {
     if (checkTokenExpiration()) {
@@ -603,6 +605,78 @@ export const getProductGroups = async () => {
     const response = await api.get(`/group/list`);
     return response.data;
   } catch (error) {
+    throw error;
+  }
+};
+
+export const addProductGroup = async (name, detail, detail_en) => {
+  try {
+    const data = {
+      name: name,
+      detail: detail || null,
+      detail_en: detail_en || null,
+      editable: 1,
+      order: 0,
+      active: true
+    };
+
+    if (checkTokenExpiration()) {
+      const new_token = await refreshToken()
+      api.defaults.headers.common['Authorization'] = `${new_token}`;
+      const response = await api.post('/group/add', data);
+      return response.data;
+    } else {
+      const response = await api.post('/group/add', data);
+      return response.data;
+    }
+  } catch (error) {
+    Swal.fire(
+      'Error',
+      'Đã có lỗi xãy ra',
+      'error'
+    )
+    throw error;
+  }
+};
+
+export const updateProductGroup = async (data) => {
+  try {
+    if (checkTokenExpiration()) {
+      const new_token = await refreshToken()
+      api.defaults.headers.common['Authorization'] = `${new_token}`;
+      const response = await api.put(`/group/update`, data);
+      return response.data;
+    } else {
+      const response = await api.put(`/group/update`, data);
+      return response.data;
+    }
+  } catch (error) {
+    Swal.fire(
+      'Error',
+      'Đã có lỗi xãy ra',
+      'error'
+    )
+    throw error;
+  }
+};
+
+export const deleteProductGroup = async (id) => {
+  try {
+    if (checkTokenExpiration()) {
+      const new_token = await refreshToken()
+      api.defaults.headers.common['Authorization'] = `${new_token}`;
+      const response = await api.delete(`/group/delete/${id}`);
+      return response.data;
+    } else {
+      const response = await api.delete(`/group/delete/${id}`);
+      return response.data;
+    }
+  } catch (error) {
+    Swal.fire(
+      'Error',
+      'Đã có lỗi xãy ra',
+      'error'
+    )
     throw error;
   }
 };

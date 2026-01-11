@@ -1,4 +1,4 @@
-import { Navigate, useRoutes, useLocation, Route,  } from 'react-router-dom'; 
+import { Navigate, useRoutes, useLocation, Route, } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import jwt_decode from 'jwt-decode';
 // layouts
@@ -11,6 +11,7 @@ import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
+import ProductLinesPage from './pages/ProductLinesPage';
 import EditPost from './pages/EditPost';
 import AddNewPost from './pages/AddNewPost';
 import { checkTokenExpiration, refreshToken } from './api';
@@ -23,26 +24,26 @@ const PrivateRoute = ({ element, ...rest }) => {
   if (token && token != 'undefined' && checkTokenExpiration()) {
     // If expired, refresh the access token
     refreshToken()
-    .then((newAccessToken) => {
-      if (!newAccessToken) {
-        // Redirect to login if refresh fails
+      .then((newAccessToken) => {
+        if (!newAccessToken) {
+          // Redirect to login if refresh fails
+          return <Navigate to="/login" replace />;
+        }
+      })
+      .catch(() => {
+        // Redirect to login if refresh throws an error
         return <Navigate to="/login" replace />;
-      }
-    })
-    .catch(() => {
-      // Redirect to login if refresh throws an error
-      return <Navigate to="/login" replace />;
-    });
-  }else if(!token || token == 'undefined'){
+      });
+  } else if (!token || token == 'undefined') {
     return <Navigate to="/login" replace />;
   }
-  if(token && token != 'undefined'){
-    setAuthToken(token) 
-  }else{
+  if (token && token != 'undefined') {
+    setAuthToken(token)
+  } else {
     localStorage.removeItem('token')
   }
   return element;
-  
+
 };
 
 export default function Router() {
@@ -57,6 +58,7 @@ export default function Router() {
         { path: 'user', element: <PrivateRoute element={<UserPage />} /> },
         { path: 'products', element: <PrivateRoute element={<ProductsPage />} /> },
         { path: 'products/add', element: <PrivateRoute element={<AddNewProduct />} /> },
+        { path: 'product-lines', element: <PrivateRoute element={<ProductLinesPage />} /> },
         { path: 'news', element: <PrivateRoute element={<BlogPage />} /> },
         { path: 'news/:id', element: <PrivateRoute element={<EditPost />} /> },
         { path: 'news/add', element: <PrivateRoute element={<AddNewPost />} /> },

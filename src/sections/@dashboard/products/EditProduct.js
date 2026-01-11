@@ -168,6 +168,7 @@ export default function EditProduct({ subList, row, setOpen, setUpdate, update, 
             <h3 style={{ textAlign: "left" }}>Product description VI</h3>
 
             <EditorComponent des={des} setDes={setDes} />
+
             <h3 style={{ textAlign: "left" }}>Product description EN</h3>
 
             <EditorComponent des={des_en} setDes={setDesEN} />
@@ -181,6 +182,7 @@ export default function EditProduct({ subList, row, setOpen, setUpdate, update, 
           <Button variant="contained" onClick={() => { handleUpdateProduct(row.id_product, name, des, des_en, group, brochure) }}>Update</Button>
           <Button variant="text" style={{ color: "gray" }} onClick={handleCancel}>Cancel</Button>
         </Stack>
+
         {
           !(subList?.length > 0) &&
           <Button variant="text" color="error" onClick={() => { handleDeleteProduct(row, setUpdate, update) }}>Delete product</Button>
