@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Card,
@@ -11,14 +10,74 @@ import {
     Typography,
     Switch,
     IconButton,
-    Stack
+    Stack,
+    Button
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { updateProductGroup, deleteProductGroup } from 'src/api';
 import Swal from 'sweetalert2';
 
 export default function ProductLineTable({ groups, setUpdate, update }) {
+    const [localGroups, setLocalGroups] = useState([]);
+    const [isChanged, setIsChanged] = useState(false);
+
+    useEffect(() => {
+        setLocalGroups([...groups].sort((a, b) => a.order - b.order));
+        setIsChanged(false);
+    }, [groups]);
+
+    const handleMoveUp = (index) => {
+        if (index === 0) return;
+        const newGroups = [...localGroups];
+        const temp = newGroups[index];
+        newGroups[index] = newGroups[index - 1];
+        newGroups[index - 1] = temp;
+        setLocalGroups(newGroups);
+        setIsChanged(true);
+    };
+
+    const handleMoveDown = (index) => {
+        if (index === localGroups.length - 1) return;
+        const newGroups = [...localGroups];
+        const temp = newGroups[index];
+        newGroups[index] = newGroups[index + 1];
+        newGroups[index + 1] = temp;
+        setLocalGroups(newGroups);
+        setIsChanged(true);
+    };
+
+    const handleSaveOrder = async () => {
+        Swal.fire({
+            title: 'Saving new order...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        try {
+            for (let i = 0; i < localGroups.length; i++) {
+                const group = localGroups[i];
+                // Only update if the order value has changed
+                if (group.order !== i) {
+                    const data = {
+                        ...group,
+                        order: i
+                    };
+                    await updateProductGroup(data);
+                }
+            }
+            Swal.fire('Thành công', 'Đã lưu thứ tự mới.', 'success');
+            setUpdate(!update);
+            setIsChanged(false);
+        } catch (error) {
+            Swal.fire('Lỗi', 'Không thể lưu thứ tự.', 'error');
+        }
+    };
+
     const handleStatusChange = async (group, checked) => {
         if (!checked) {
             await Swal.fire({
@@ -124,22 +183,40 @@ export default function ProductLineTable({ groups, setUpdate, update }) {
         <Card sx={{ mt: 3, mb: 3 }}>
             <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Typography variant="h6">Product Lines (Categories)</Typography>
+                {isChanged && (
+                    <Button variant="contained" color="warning" onClick={handleSaveOrder}>
+                        Save Order
+                    </Button>
+                )}
             </Box>
             <Box sx={{ minWidth: 600 }}>
                 <Table>
                     <TableHead>
                         <TableRow>
+                            <TableCell align="center">Sort</TableCell>
                             <TableCell align="center">ID</TableCell>
                             <TableCell align="center">Name</TableCell>
+                            <TableCell align="center">Order</TableCell>
                             <TableCell align="center">Status</TableCell>
                             <TableCell align="center">Action</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {groups.map((group, index) => (
+                        {localGroups.map((group, index) => (
                             <TableRow key={group.id_group}>
+                                <TableCell align="center">
+                                    <Stack direction="row" justifyContent="center">
+                                        <IconButton size="small" onClick={() => handleMoveUp(index)} disabled={index === 0}>
+                                            <ArrowUpwardIcon fontSize="small" />
+                                        </IconButton>
+                                        <IconButton size="small" onClick={() => handleMoveDown(index)} disabled={index === localGroups.length - 1}>
+                                            <ArrowDownwardIcon fontSize="small" />
+                                        </IconButton>
+                                    </Stack>
+                                </TableCell>
                                 <TableCell align="center">{group.id_group}</TableCell>
                                 <TableCell align="center">{group.name}</TableCell>
+                                <TableCell align="center">{group.order}</TableCell>
                                 <TableCell align="center">
                                     <Switch
                                         checked={group.active === 1 || group.active === true}

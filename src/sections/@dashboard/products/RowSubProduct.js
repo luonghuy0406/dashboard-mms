@@ -1,31 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { Modal } from '@material-ui/core';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import {
-  Box,
-  Card,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Typography,
+  Button,
+  CardMedia,
   Collapse,
   IconButton,
-  CardMedia,
-  TextField,
-  Button,
-  Divider,
-  Grid
+  TableCell,
+  TableRow
 } from '@mui/material';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import EditorComponent from './EditorComponent';
+import { useState } from 'react';
+import { deleteSubProduct } from 'src/api';
 import Swal from 'sweetalert2';
-import { deleteSubProduct, getSubProducts } from 'src/api';
 
-import CloseIcon from '@mui/icons-material/Close';
-import AddIcon from '@mui/icons-material/Add';
 import EditSubProduct from './EditSubProduct';
 
 const style = {
@@ -112,6 +98,32 @@ export default function RowSubProduct({ row, setUpdate, update }) {
               'WebkitBoxOrient': 'vertical'
             }}
             dangerouslySetInnerHTML={{ __html: row.content_en }}
+          />
+        </TableCell>
+        <TableCell align="center" sx={{ width: 300 }}>
+          <div
+            style={{
+              'overflow': 'hidden',
+              'display': '-webkit-box',
+              'WebkitLineClamp': '6', /* number of lines to show */
+              'lineClamp': '6',
+              'WebkitBoxOrient': 'vertical'
+            }}
+            className='ck-content'
+            dangerouslySetInnerHTML={{ __html: row.spec }}
+          />
+        </TableCell>
+        <TableCell align="center" sx={{ width: 300 }}>
+          <div
+            className='ck-content'
+            style={{
+              'overflow': 'hidden',
+              'display': '-webkit-box',
+              'WebkitLineClamp': '6', /* number of lines to show */
+              'lineClamp': '6',
+              'WebkitBoxOrient': 'vertical'
+            }}
+            dangerouslySetInnerHTML={{ __html: row.spec_en }}
           />
         </TableCell>
         <TableCell align="center" sx={{ width: 200 }}>

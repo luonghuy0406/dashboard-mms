@@ -21,6 +21,8 @@ export default function EditProduct({ subList, row, setOpen, setUpdate, update, 
   const [image, setImage] = useState(`https://api.mmsvn.com/read_image/${row.image}`)
   const [des, setDes] = useState(row.des)
   const [des_en, setDesEN] = useState(row.des_en)
+  const [spec, setSpec] = useState(row.spec)
+  const [spec_en, setSpecEN] = useState(row.spec_en)
   const [brochure, setBrochure] = useState(row.brochure)
   const [group, setGroup] = useState(row.id_group)
   const [productGroups, setProductGroups] = useState([])
@@ -48,10 +50,10 @@ export default function EditProduct({ subList, row, setOpen, setUpdate, update, 
     setImage(URL.createObjectURL(file))
 
   };
-  const handleUpdateProduct = async (id, name, des, des_en, id_group, brochure) => {
+  const handleUpdateProduct = async (id, name, des, des_en, id_group, brochure, spec, spec_en) => {
     if (name?.length > 0) {
       let image = document.getElementById("file-upload-product" + id).files[0]
-      const response = await updateProduct(id, name, des, des_en, image || '', id_group, brochure)
+      const response = await updateProduct(id, name, des, des_en, image || '', id_group, brochure, spec, spec_en)
       Swal.fire(
         response.results.status,
         response.results.msg,
@@ -70,6 +72,8 @@ export default function EditProduct({ subList, row, setOpen, setUpdate, update, 
     setImage(`https://api.mmsvn.com/read_image/${row.image}`)
     setDes(row.des)
     setDesEN(row.des_en)
+    setSpec(row.spec)
+    setSpecEN(row.spec_en)
     setOpen(false)
     setBrochure(row.brochure)
     setGroup(row.id_group)
@@ -77,11 +81,11 @@ export default function EditProduct({ subList, row, setOpen, setUpdate, update, 
   return (
     <Box sx={{ margin: 3 }}>
       <Grid container>
-        <Grid item xs={2}>
+        {/* <Grid item xs={2}>
           <Typography variant="h6" gutterBottom component="div">
             Edit product
           </Typography>
-        </Grid>
+        </Grid> */}
         <Grid item xs={10}>
           <Box
             component="form"
@@ -169,9 +173,17 @@ export default function EditProduct({ subList, row, setOpen, setUpdate, update, 
 
             <EditorComponent des={des} setDes={setDes} />
 
+            <h3 style={{ textAlign: "left" }}>Product specification VI</h3>
+
+            <EditorComponent des={spec} setDes={setSpec} />
+
             <h3 style={{ textAlign: "left" }}>Product description EN</h3>
 
             <EditorComponent des={des_en} setDes={setDesEN} />
+
+            <h3 style={{ textAlign: "left" }}>Product specification EN</h3>
+
+            <EditorComponent des={spec_en} setDes={setSpecEN} />
 
           </Box>
         </Grid>
@@ -179,7 +191,7 @@ export default function EditProduct({ subList, row, setOpen, setUpdate, update, 
       <Divider />
       <Stack sx={{ m: 2 }} spacing={2} direction="row" justifyContent="space-between">
         <Stack spacing={2} direction="row">
-          <Button variant="contained" onClick={() => { handleUpdateProduct(row.id_product, name, des, des_en, group, brochure) }}>Update</Button>
+          <Button variant="contained" onClick={() => { handleUpdateProduct(row.id_product, name, des, des_en, group, brochure, spec, spec_en) }}>Update</Button>
           <Button variant="text" style={{ color: "gray" }} onClick={handleCancel}>Cancel</Button>
         </Stack>
 

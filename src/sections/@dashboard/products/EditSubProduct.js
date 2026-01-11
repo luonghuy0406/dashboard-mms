@@ -19,15 +19,17 @@ export default function EditSubProduct({ row, setOpen, setUpdate, update, handle
   const [image, setImage] = useState(`https://api.mmsvn.com/read_image/${row.image}`)
   const [content, setContent] = useState(row.content)
   const [content_en, setContentEN] = useState(row.content_en)
+  const [spec, setSpec] = useState(row.spec)
+  const [spec_en, setSpecEN] = useState(row.spec_en)
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     setImage(URL.createObjectURL(file))
 
   };
-  const handleUpdateProduct = async (id, name, content, content_en, id_product) => {
+  const handleUpdateProduct = async (id, name, content, content_en, id_product, spec, spec_en) => {
     if (name?.length > 0) {
       let image = document.getElementById("file-upload-sub-product" + id).files[0]
-      const response = await updateSubProduct(id, name, content, content_en, image || '', id_product)
+      const response = await updateSubProduct(id, name, content, content_en, image || '', id_product, spec, spec_en)
       Swal.fire(
         response.results.status,
         response.results.msg,
@@ -46,6 +48,8 @@ export default function EditSubProduct({ row, setOpen, setUpdate, update, handle
     setImage(`https://api.mmsvn.com/read_image/${row.image}`)
     setContent(row.content)
     setContentEN(row.content_en)
+    setSpec(row.spec)
+    setSpecEN(row.spec_en)
     setOpen(false)
     document.getElementById("file-upload-sub-product" + id).value = ''
   }
@@ -117,9 +121,18 @@ export default function EditSubProduct({ row, setOpen, setUpdate, update, handle
             <h3 style={{ textAlign: "left" }}>Product description VI</h3>
 
             <EditorComponent des={content} setDes={setContent} />
+
+            <h3 style={{ textAlign: "left" }}>Product specification VI</h3>
+
+            <EditorComponent des={spec} setDes={setSpec} />
+
             <h3 style={{ textAlign: "left" }}>Product description EN</h3>
 
             <EditorComponent des={content_en} setDes={setContentEN} />
+
+            <h3 style={{ textAlign: "left" }}>Product specification EN</h3>
+
+            <EditorComponent des={spec_en} setDes={setSpecEN} />
 
           </Box>
         </Grid>
@@ -127,7 +140,7 @@ export default function EditSubProduct({ row, setOpen, setUpdate, update, handle
       <Divider />
       <Stack sx={{ m: 2 }} spacing={2} direction="row" justifyContent="space-between">
         <Stack spacing={2} direction="row">
-          <Button variant="contained" onClick={() => { handleUpdateProduct(row.id_sub, name, content, content_en, row.id_product) }}>Update</Button>
+          <Button variant="contained" onClick={() => { handleUpdateProduct(row.id_sub, name, content, content_en, row.id_product, spec, spec_en) }}>Update</Button>
           <Button variant="text" style={{ color: "gray" }} onClick={() => { handleCancel(row.id_sub) }}>Cancel</Button>
         </Stack>
         <Button variant="text" color="error" onClick={() => { handleDeleteProduct(row, setUpdate, update) }}>Delete product</Button>

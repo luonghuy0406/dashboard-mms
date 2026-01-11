@@ -299,7 +299,7 @@ export const getListProducts = async () => {
     throw error;
   }
 };
-export const updateProduct = async (id_product, name, des, des_en, image, id_group, brochure) => {
+export const updateProduct = async (id_product, name, des, des_en, image, id_group, brochure, spec, spec_en) => {
   try {
     const FormData = require('form-data');
     let data = new FormData();
@@ -307,6 +307,8 @@ export const updateProduct = async (id_product, name, des, des_en, image, id_gro
     data.append('des', des);
     data.append('name', name);
     data.append('des_en', des_en);
+    data.append('spec', spec);
+    data.append('spec_en', spec_en);
     if (typeof image == 'object' && image?.name) {
       data.append('image', image, Date.now());
     } else {
@@ -332,7 +334,7 @@ export const updateProduct = async (id_product, name, des, des_en, image, id_gro
     throw error;
   }
 };
-export const addProduct = async (name, des, des_en, image, id_group, brochure) => {
+export const addProduct = async (name, des, des_en, image, id_group, brochure, spec, spec_en) => {
   try {
 
     let id_user = localStorage.getItem("user")
@@ -342,6 +344,8 @@ export const addProduct = async (name, des, des_en, image, id_group, brochure) =
     data.append('des', des);
     data.append('name', name);
     data.append('des_en', des_en);
+    data.append('spec', spec);
+    data.append('spec_en', spec_en);
     if (typeof image == 'object' && image?.name) {
       data.append('image', image, Date.now());
     } else {
@@ -399,16 +403,18 @@ export const getSubProducts = async () => {
     throw error;
   }
 };
-export const addSubProduct = async (name, content, content_en, image, id_product) => {
+export const addSubProduct = async (name, content, content_en, image, id_product, spec, spec_en) => {
   try {
     let id_user = localStorage.getItem("user")
     const FormData = require('form-data');
     let data = new FormData();
     data.append('id_user', id_user);
     data.append('content', content);
-    data.append('name', name && image?.name);
+    data.append('name', name);
     data.append('content_en', content_en);
-    if (typeof image == 'object') {
+    data.append('spec', spec);
+    data.append('spec_en', spec_en);
+    if (typeof image == 'object' && image?.name) {
       data.append('image', image, Date.now());
     } else {
       data.append('image', image);
@@ -433,7 +439,7 @@ export const addSubProduct = async (name, content, content_en, image, id_product
     throw error;
   }
 };
-export const updateSubProduct = async (id_sub, name, content, content_en, image, id_product) => {
+export const updateSubProduct = async (id_sub, name, content, content_en, image, id_product, spec, spec_en) => {
   try {
     let id_user = localStorage.getItem("user")
     const FormData = require('form-data');
@@ -443,6 +449,8 @@ export const updateSubProduct = async (id_sub, name, content, content_en, image,
     data.append('content', content);
     data.append('name', name);
     data.append('content_en', content_en);
+    data.append('spec', spec);
+    data.append('spec_en', spec_en);
     if (typeof image == 'object' && image?.name) {
       data.append('image', image, Date.now());
     } else {

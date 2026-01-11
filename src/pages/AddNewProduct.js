@@ -11,6 +11,8 @@ export default function AddNewProduct() {
     const [name, setName] = useState('')
     const [des, setDes] = useState('')
     const [des_en, setDesEN] = useState('')
+    const [spec, setSpec] = useState('')
+    const [spec_en, setSpecEN] = useState('')
     const [image, setImage] = useState('')
     const [group, setGroup] = useState('')
     const [productGroups, setProductGroups] = useState([])
@@ -42,10 +44,10 @@ export default function AddNewProduct() {
         setImage(URL.createObjectURL(file))
 
     };
-    const handleAddProduct = async (name, des, des_en, image, id_group, brochure) => {
+    const handleAddProduct = async (name, des, des_en, image, id_group, brochure, spec, spec_en) => {
         if (name && image) {
             let imageUpload = document.getElementById("file-upload-new-product").files[0]
-            const response = await addProduct(name, des, des_en, imageUpload, id_group, brochure)
+            const response = await addProduct(name, des, des_en, imageUpload, id_group, brochure, spec, spec_en)
             if (response.results.status == 'success') {
                 handleCancel()
                 navigate('/dashboard/products', { replace: true });
@@ -61,6 +63,8 @@ export default function AddNewProduct() {
         setName('')
         setDes('')
         setDesEN('')
+        setSpec('')
+        setSpecEN('')
         setImage('')
         setGroup('')
         setBrochure('')
@@ -199,15 +203,31 @@ export default function AddNewProduct() {
                 <Stack mb={5} >
                     <Card sx={{ p: 2 }}>
                         <Typography variant="h6" gutterBottom>
+                            Product Specification EN
+                        </Typography>
+                        <EditorComponent des={spec_en} setDes={setSpecEN} />
+                    </Card>
+                </Stack>
+                <Stack mb={5} >
+                    <Card sx={{ p: 2 }}>
+                        <Typography variant="h6" gutterBottom>
                             Product Description VI
                         </Typography>
                         <EditorComponent des={des} setDes={setDes} />
                     </Card>
                 </Stack>
+                <Stack mb={5} >
+                    <Card sx={{ p: 2 }}>
+                        <Typography variant="h6" gutterBottom>
+                            Product Specification VI
+                        </Typography>
+                        <EditorComponent des={spec} setDes={setSpec} />
+                    </Card>
+                </Stack>
 
                 <Stack sx={{ m: 2 }} spacing={2} direction="row" justifyContent="end">
                     <Stack spacing={2} direction="row">
-                        <Button variant="contained" onClick={() => { handleAddProduct(name, des, des_en, image, group, brochure) }}>Save post</Button>
+                        <Button variant="contained" onClick={() => { handleAddProduct(name, des, des_en, image, group, brochure, spec, spec_en) }}>Save post</Button>
                         <Button variant="text" style={{ color: "gray" }} onClick={handleCancel}>Cancel</Button>
                     </Stack>
                 </Stack>

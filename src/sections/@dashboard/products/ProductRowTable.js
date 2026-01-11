@@ -112,32 +112,7 @@ export default function ProductRowTable({ row, index, group, setUpdate, update }
             alt={row.name}
           />
         </TableCell>
-        <TableCell align="center" sx={{ width: 300 }}>
-          <div
-            style={{
-              'overflow': 'hidden',
-              'display': '-webkit-box',
-              'WebkitLineClamp': '6', /* number of lines to show */
-              'lineClamp': '6',
-              'WebkitBoxOrient': 'vertical'
-            }}
-            className='ck-content'
-            dangerouslySetInnerHTML={{ __html: row.des }}
-          />
-        </TableCell>
-        <TableCell align="center" sx={{ width: 300 }}>
-          <div
-            className='ck-content'
-            style={{
-              'overflow': 'hidden',
-              'display': '-webkit-box',
-              'WebkitLineClamp': '6', /* number of lines to show */
-              'lineClamp': '6',
-              'WebkitBoxOrient': 'vertical'
-            }}
-            dangerouslySetInnerHTML={{ __html: row.des_en }}
-          />
-        </TableCell>
+        
         <TableCell align="center" sx={{ width: 200 }}>
           <Button variant="text" onClick={() => { setOpenModal(true) }}>Show sub product ({subList.length})</Button>
           <Modal
