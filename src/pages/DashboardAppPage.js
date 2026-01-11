@@ -8,12 +8,13 @@ import Banner from 'src/sections/@dashboard/app/Banner';
 import AboutUs from 'src/sections/@dashboard/app/AboutUs';
 import CompanyInfo from 'src/sections/@dashboard/app/CompanyInfo';
 import Customer from 'src/sections/@dashboard/app/Partner';
+import FeaturedProducts from 'src/sections/@dashboard/app/FeaturedProducts';
 
 
 // ----------------------------------------------------------------------
 
 export default function DashboardAppPage() {
-  
+
   return (
     <>
       <Helmet>
@@ -27,48 +28,51 @@ export default function DashboardAppPage() {
 
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <Card 
+            <Card
               sx={{
                 py: 5,
-                px:3,
+                px: 3,
                 boxShadow: 0
               }}
             >
-              <Banner/>
+              <Banner />
             </Card>
           </Grid>
           <Grid item xs={12}>
-            <Card 
+            <Card
               sx={{
                 py: 5,
-                px:3,
+                px: 3,
                 boxShadow: 0
               }}
             >
-              <AboutUs/>
+              <AboutUs />
             </Card>
           </Grid>
           <Grid item xs={12}>
-            <Card 
+            <Card
               sx={{
                 py: 5,
-                px:3,
+                px: 3,
                 boxShadow: 0
               }}
             >
-              <CompanyInfo/>
+              <CompanyInfo />
             </Card>
           </Grid>
           <Grid item xs={12}>
-            <Card 
+            <Card
               sx={{
                 py: 5,
-                px:3,
+                px: 3,
                 boxShadow: 0
               }}
             >
-              <Customer/>
+              <Customer />
             </Card>
+          </Grid>
+          <Grid item xs={12}>
+            <FeaturedProducts />
           </Grid>
         </Grid>
       </Container>

@@ -196,7 +196,7 @@ export default function ProductLineTable({ groups, setUpdate, update }) {
                             <TableCell align="center">Sort</TableCell>
                             <TableCell align="center">ID</TableCell>
                             <TableCell align="center">Name</TableCell>
-                            <TableCell align="center">Order</TableCell>
+                            {/* <TableCell align="center">Order</TableCell> */}
                             <TableCell align="center">Status</TableCell>
                             <TableCell align="center">Action</TableCell>
                         </TableRow>
@@ -216,7 +216,7 @@ export default function ProductLineTable({ groups, setUpdate, update }) {
                                 </TableCell>
                                 <TableCell align="center">{group.id_group}</TableCell>
                                 <TableCell align="center">{group.name}</TableCell>
-                                <TableCell align="center">{group.order}</TableCell>
+                                {/* <TableCell align="center">{group.order}</TableCell> */}
                                 <TableCell align="center">
                                     <Switch
                                         checked={group.active === 1 || group.active === true}

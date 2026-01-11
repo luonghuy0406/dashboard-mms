@@ -299,7 +299,7 @@ export const getListProducts = async () => {
     throw error;
   }
 };
-export const updateProduct = async (id_product, name, des, des_en, image, id_group, brochure, spec, spec_en) => {
+export const updateProduct = async (id_product, name, des, des_en, image, id_group, brochure, spec, spec_en, is_featured) => {
   try {
     const FormData = require('form-data');
     let data = new FormData();
@@ -309,6 +309,7 @@ export const updateProduct = async (id_product, name, des, des_en, image, id_gro
     data.append('des_en', des_en);
     data.append('spec', spec);
     data.append('spec_en', spec_en);
+    data.append('is_featured', is_featured ?? 0);
     if (typeof image == 'object' && image?.name) {
       data.append('image', image, Date.now());
     } else {
@@ -346,6 +347,7 @@ export const addProduct = async (name, des, des_en, image, id_group, brochure, s
     data.append('des_en', des_en);
     data.append('spec', spec);
     data.append('spec_en', spec_en);
+    data.append('is_featured', 0);
     if (typeof image == 'object' && image?.name) {
       data.append('image', image, Date.now());
     } else {
@@ -611,6 +613,15 @@ export const deletePost = async (id) => {
 export const getProductGroups = async () => {
   try {
     const response = await api.get(`/group/list`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getFeaturedProducts = async () => {
+  try {
+    const response = await api.get(`/product/list_featured`);
     return response.data;
   } catch (error) {
     throw error;
