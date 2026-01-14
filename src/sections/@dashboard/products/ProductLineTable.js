@@ -65,7 +65,7 @@ export default function ProductLineTable({ groups, setUpdate, update }) {
                 if (group.order !== i) {
                     const data = {
                         ...group,
-                        order: i
+                        order: i+1
                     };
                     await updateProductGroup(data);
                 }
