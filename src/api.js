@@ -304,397 +304,403 @@ export const updateProduct = async (id_product, name, des, des_en, image, id_gro
     const FormData = require('form-data');
     let data = new FormData();
     data.append('id_product', id_product);
-    data.append('des', des);
-    data.append('name', name);
-    data.append('des_en', des_en);
-    data.append('spec', spec);
-    data.append('spec_en', spec_en);
-    data.append('is_featured', is_featured ?? 0);
-    if (typeof image == 'object' && image?.name) {
-      data.append('image', image, Date.now());
-    } else {
-      data.append('image', image);
-    }
-    data.append('id_group', id_group);
-    data.append('brochure', brochure);
-    if (checkTokenExpiration()) {
-      const new_token = await refreshToken()
-      api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.put(`/product/update`, data);
-      return response.data;
-    } else {
-      const response = await api.put(`/product/update`, data);
-      return response.data;
-    }
-  } catch (error) {
-    Swal.fire(
-      'Error',
-      'Đã có lỗi xãy ra',
-      'error'
-    )
-    throw error;
-  }
-};
-export const addProduct = async (name, des, des_en, image, id_group, brochure, spec, spec_en) => {
-  try {
 
-    let id_user = localStorage.getItem("user")
-    const FormData = require('form-data');
-    let data = new FormData();
-    data.append('id_user', id_user);
-    data.append('des', des);
-    data.append('name', name);
-    data.append('des_en', des_en);
-    data.append('spec', spec);
-    data.append('spec_en', spec_en);
-    data.append('is_featured', 0);
-    if (typeof image == 'object' && image?.name) {
-      data.append('image', image, Date.now());
-    } else {
-      data.append('image', image);
-    }
-    data.append('id_group', id_group);
-    data.append('brochure', brochure);
-    if (checkTokenExpiration()) {
-      const new_token = await refreshToken()
-      api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.post(`/product/add`, data);
-      return response.data;
-    } else {
-      const response = await api.post(`/product/add`, data);
-      return response.data;
-    }
-  } catch (error) {
-    Swal.fire(
-      'Error',
-      'Đã có lỗi xãy ra',
-      'error'
-    )
-    throw error;
-  }
-};
+    // Only append fields that are not undefined
+    if (name !== undefined) data.append('name', name);
+    if (des !== undefined) data.append('des', des);
+    if (des_en !== undefined) data.append('des_en', des_en);
+    if (spec !== undefined) data.append('spec', spec);
+    if (spec_en !== undefined) data.append('spec_en', spec_en);
+    if (is_featured !== undefined) data.append('is_featured', is_featured);
+    if (id_group !== undefined) data.append('id_group', id_group);
+    if (brochure !== undefined) data.append('brochure', brochure);
 
-
-export const deleteProduct = async (id) => {
-  try {
-    if (checkTokenExpiration()) {
-      const new_token = await refreshToken()
-      api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.delete(`/product/delete/${id}`);
-      return response.data;
-    } else {
-      const response = await api.delete(`/product/delete/${id}`);
-      return response.data;
+    // Handle image
+    if (image !== undefined) {
+      if (typeof image == 'object' && image?.name) {
+        data.append('image', image, Date.now());
+      } else {
+        data.append('image', image);
+      }
     }
-  } catch (error) {
-    Swal.fire(
-      'Error',
-      'Đã có lỗi xãy ra',
-      'error'
-    )
-    throw error;
-  }
-};
+      if (checkTokenExpiration()) {
+        const new_token = await refreshToken()
+        api.defaults.headers.common['Authorization'] = `${new_token}`;
+        const response = await api.put(`/product/update`, data);
+        return response.data;
+      } else {
+        const response = await api.put(`/product/update`, data);
+        return response.data;
+      }
+    } catch (error) {
+      Swal.fire(
+        'Error',
+        'Đã có lỗi xãy ra',
+        'error'
+      )
+      throw error;
+    }
+  };
+  export const addProduct = async (name, des, des_en, image, id_group, brochure, spec, spec_en) => {
+    try {
+
+      let id_user = localStorage.getItem("user")
+      const FormData = require('form-data');
+      let data = new FormData();
+      data.append('id_user', id_user);
+      data.append('des', des);
+      data.append('name', name);
+      data.append('des_en', des_en);
+      data.append('spec', spec);
+      data.append('spec_en', spec_en);
+      data.append('is_featured', 0);
+      if (typeof image == 'object' && image?.name) {
+        data.append('image', image, Date.now());
+      } else {
+        data.append('image', image);
+      }
+      data.append('id_group', id_group);
+      data.append('brochure', brochure);
+      if (checkTokenExpiration()) {
+        const new_token = await refreshToken()
+        api.defaults.headers.common['Authorization'] = `${new_token}`;
+        const response = await api.post(`/product/add`, data);
+        return response.data;
+      } else {
+        const response = await api.post(`/product/add`, data);
+        return response.data;
+      }
+    } catch (error) {
+      Swal.fire(
+        'Error',
+        'Đã có lỗi xãy ra',
+        'error'
+      )
+      throw error;
+    }
+  };
 
 
-export const getSubProducts = async () => {
-  try {
-    const response = await api.get(`/sub/list`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-export const addSubProduct = async (name, content, content_en, image, id_product, spec, spec_en) => {
-  try {
-    let id_user = localStorage.getItem("user")
-    const FormData = require('form-data');
-    let data = new FormData();
-    data.append('id_user', id_user);
-    data.append('content', content);
-    data.append('name', name);
-    data.append('content_en', content_en);
-    data.append('spec', spec);
-    data.append('spec_en', spec_en);
-    if (typeof image == 'object' && image?.name) {
-      data.append('image', image, Date.now());
-    } else {
-      data.append('image', image);
+  export const deleteProduct = async (id) => {
+    try {
+      if (checkTokenExpiration()) {
+        const new_token = await refreshToken()
+        api.defaults.headers.common['Authorization'] = `${new_token}`;
+        const response = await api.delete(`/product/delete/${id}`);
+        return response.data;
+      } else {
+        const response = await api.delete(`/product/delete/${id}`);
+        return response.data;
+      }
+    } catch (error) {
+      Swal.fire(
+        'Error',
+        'Đã có lỗi xãy ra',
+        'error'
+      )
+      throw error;
     }
-    data.append('id_product', id_product);
-
-    if (checkTokenExpiration()) {
-      const new_token = await refreshToken()
-      api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.post(`/sub/add`, data);
-      return response.data;
-    } else {
-      const response = await api.post(`/sub/add`, data);
-      return response.data;
-    }
-  } catch (error) {
-    Swal.fire(
-      'Error',
-      'Đã có lỗi xãy ra',
-      'error'
-    )
-    throw error;
-  }
-};
-export const updateSubProduct = async (id_sub, name, content, content_en, image, id_product, spec, spec_en) => {
-  try {
-    let id_user = localStorage.getItem("user")
-    const FormData = require('form-data');
-    let data = new FormData();
-    data.append('id_sub', id_sub);
-    data.append('id_user', id_user);
-    data.append('content', content);
-    data.append('name', name);
-    data.append('content_en', content_en);
-    data.append('spec', spec);
-    data.append('spec_en', spec_en);
-    if (typeof image == 'object' && image?.name) {
-      data.append('image', image, Date.now());
-    } else {
-      data.append('image', image);
-    }
-    data.append('id_product', id_product);
-
-    if (checkTokenExpiration()) {
-      const new_token = await refreshToken()
-      api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.put(`/sub/update`, data);
-      return response.data;
-    } else {
-      const response = await api.put(`/sub/update`, data);
-      return response.data;
-    }
-  } catch (error) {
-    Swal.fire(
-      'Error',
-      'Đã có lỗi xãy ra',
-      'error'
-    )
-    throw error;
-  }
-};
-export const deleteSubProduct = async (id) => {
-  try {
-    if (checkTokenExpiration()) {
-      const new_token = await refreshToken()
-      api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.delete(`/sub/delete/${id}`);
-      return response.data;
-    } else {
-      const response = await api.delete(`/sub/delete/${id}`);
-      return response.data;
-    }
-  } catch (error) {
-    Swal.fire(
-      'Error',
-      'Đã có lỗi xãy ra',
-      'error'
-    )
-    throw error;
-  }
-};
-//-----post--------
-export const getPosts = async () => {
-  try {
-    const response = await api.get(`/post/list`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
+  };
 
 
-export const getPostById = async (id) => {
-  try {
-    const response = await api.get(`post/detail/${id}`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
+  export const getSubProducts = async () => {
+    try {
+      const response = await api.get(`/sub/list`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+  export const addSubProduct = async (name, content, content_en, image, id_product, spec, spec_en) => {
+    try {
+      let id_user = localStorage.getItem("user")
+      const FormData = require('form-data');
+      let data = new FormData();
+      data.append('id_user', id_user);
+      data.append('content', content);
+      data.append('name', name);
+      data.append('content_en', content_en);
+      data.append('spec', spec);
+      data.append('spec_en', spec_en);
+      if (typeof image == 'object' && image?.name) {
+        data.append('image', image, Date.now());
+      } else {
+        data.append('image', image);
+      }
+      data.append('id_product', id_product);
 
-export const addNewPost = async (name, name_en, content, content_en, image) => {
-  try {
-    const id_user = localStorage.getItem('user')
-    const author = localStorage.getItem('name')
-    const FormData = require('form-data');
-    let data = new FormData();
-    data.append('name', name);
-    data.append('name_en', name_en);
-    data.append('content', content);
-    data.append('content_en', content_en);
-    if (typeof image == 'object' && image?.name) {
-      data.append('image', image, Date.now());
-    } else {
-      data.append('image', image);
+      if (checkTokenExpiration()) {
+        const new_token = await refreshToken()
+        api.defaults.headers.common['Authorization'] = `${new_token}`;
+        const response = await api.post(`/sub/add`, data);
+        return response.data;
+      } else {
+        const response = await api.post(`/sub/add`, data);
+        return response.data;
+      }
+    } catch (error) {
+      Swal.fire(
+        'Error',
+        'Đã có lỗi xãy ra',
+        'error'
+      )
+      throw error;
     }
-    data.append('author', author);
-    data.append('id_user', id_user);
-    if (checkTokenExpiration()) {
-      const new_token = await refreshToken()
-      api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.post('/post/add', data);
-      return response.data;
-    } else {
-      const response = await api.post('/post/add', data);
-      return response.data;
-    }
-  } catch (error) {
-    Swal.fire(
-      'Error',
-      'Đã có lỗi xãy ra',
-      'error'
-    )
-    throw error;
-  }
-};
-export const updatePost = async (id, name, name_en, content, content_en, image) => {
-  try {
-    const id_user = localStorage.getItem('user')
-    const author = localStorage.getItem('name')
-    const FormData = require('form-data');
-    let data = new FormData();
-    data.append('id_post', id);
-    if (typeof image == 'object' && image?.name) {
-      data.append('image', image, Date.now());
-    } else {
-      data.append('image', image);
-    }
-    data.append('name', name);
-    data.append('name_en', name_en);
-    data.append('content', content);
-    data.append('content_en', content_en);
-    data.append('author', author);
-    data.append('id_user', id_user);
-    if (checkTokenExpiration()) {
-      const new_token = await refreshToken()
-      api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.put('/post/update', data);
-      return response.data;
-    } else {
-      const response = await api.put('/post/update', data);
-      return response.data;
-    }
-  } catch (error) {
-    Swal.fire(
-      'Error',
-      'Đã có lỗi xãy ra',
-      'error'
-    )
-    throw error;
-  }
-}
-export const deletePost = async (id) => {
-  try {
-    if (checkTokenExpiration()) {
-      const new_token = await refreshToken()
-      api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.delete(`/post/delete/${id}`);
-      return response.data;
-    } else {
-      const response = await api.delete(`/post/delete/${id}`);
-      return response.data;
-    }
-  } catch (error) {
-    Swal.fire(
-      'Error',
-      'Đã có lỗi xãy ra',
-      'error'
-    )
-    throw error;
-  }
-}
+  };
+  export const updateSubProduct = async (id_sub, name, content, content_en, image, id_product, spec, spec_en) => {
+    try {
+      let id_user = localStorage.getItem("user")
+      const FormData = require('form-data');
+      let data = new FormData();
+      data.append('id_sub', id_sub);
+      data.append('id_user', id_user);
+      data.append('content', content);
+      data.append('name', name);
+      data.append('content_en', content_en);
+      data.append('spec', spec);
+      data.append('spec_en', spec_en);
+      if (typeof image == 'object' && image?.name) {
+        data.append('image', image, Date.now());
+      } else {
+        data.append('image', image);
+      }
+      data.append('id_product', id_product);
 
-export const getProductGroups = async () => {
-  try {
-    const response = await api.get(`/group/list`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const getFeaturedProducts = async () => {
-  try {
-    const response = await api.get(`/product/list_featured`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const addProductGroup = async (name, detail, detail_en, is_use = 1) => {
-  try {
-    const data = {
-      name: name,
-      detail: detail || null,
-      detail_en: detail_en || null,
-      editable: 1,
-      is_use: is_use
-    };
-
-    if (checkTokenExpiration()) {
-      const new_token = await refreshToken()
-      api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.post('/group/add', data);
-      return response.data;
-    } else {
-      const response = await api.post('/group/add', data);
-      return response.data;
+      if (checkTokenExpiration()) {
+        const new_token = await refreshToken()
+        api.defaults.headers.common['Authorization'] = `${new_token}`;
+        const response = await api.put(`/sub/update`, data);
+        return response.data;
+      } else {
+        const response = await api.put(`/sub/update`, data);
+        return response.data;
+      }
+    } catch (error) {
+      Swal.fire(
+        'Error',
+        'Đã có lỗi xãy ra',
+        'error'
+      )
+      throw error;
     }
-  } catch (error) {
-    Swal.fire(
-      'Error',
-      'Đã có lỗi xãy ra',
-      'error'
-    )
-    throw error;
-  }
-};
-
-export const updateProductGroup = async (data) => {
-  try {
-    if (checkTokenExpiration()) {
-      const new_token = await refreshToken()
-      api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.put(`/group/update`, data);
-      return response.data;
-    } else {
-      const response = await api.put(`/group/update`, data);
-      return response.data;
+  };
+  export const deleteSubProduct = async (id) => {
+    try {
+      if (checkTokenExpiration()) {
+        const new_token = await refreshToken()
+        api.defaults.headers.common['Authorization'] = `${new_token}`;
+        const response = await api.delete(`/sub/delete/${id}`);
+        return response.data;
+      } else {
+        const response = await api.delete(`/sub/delete/${id}`);
+        return response.data;
+      }
+    } catch (error) {
+      Swal.fire(
+        'Error',
+        'Đã có lỗi xãy ra',
+        'error'
+      )
+      throw error;
     }
-  } catch (error) {
-    Swal.fire(
-      'Error',
-      'Đã có lỗi xãy ra',
-      'error'
-    )
-    throw error;
-  }
-};
-
-export const deleteProductGroup = async (id) => {
-  try {
-    if (checkTokenExpiration()) {
-      const new_token = await refreshToken()
-      api.defaults.headers.common['Authorization'] = `${new_token}`;
-      const response = await api.delete(`/group/delete/${id}`);
+  };
+  //-----post--------
+  export const getPosts = async () => {
+    try {
+      const response = await api.get(`/post/list`);
       return response.data;
-    } else {
-      const response = await api.delete(`/group/delete/${id}`);
-      return response.data;
+    } catch (error) {
+      throw error;
     }
-  } catch (error) {
-    Swal.fire(
-      'Error',
-      'Đã có lỗi xãy ra',
-      'error'
-    )
-    throw error;
+  };
+
+
+  export const getPostById = async (id) => {
+    try {
+      const response = await api.get(`post/detail/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  export const addNewPost = async (name, name_en, content, content_en, image) => {
+    try {
+      const id_user = localStorage.getItem('user')
+      const author = localStorage.getItem('name')
+      const FormData = require('form-data');
+      let data = new FormData();
+      data.append('name', name);
+      data.append('name_en', name_en);
+      data.append('content', content);
+      data.append('content_en', content_en);
+      if (typeof image == 'object' && image?.name) {
+        data.append('image', image, Date.now());
+      } else {
+        data.append('image', image);
+      }
+      data.append('author', author);
+      data.append('id_user', id_user);
+      if (checkTokenExpiration()) {
+        const new_token = await refreshToken()
+        api.defaults.headers.common['Authorization'] = `${new_token}`;
+        const response = await api.post('/post/add', data);
+        return response.data;
+      } else {
+        const response = await api.post('/post/add', data);
+        return response.data;
+      }
+    } catch (error) {
+      Swal.fire(
+        'Error',
+        'Đã có lỗi xãy ra',
+        'error'
+      )
+      throw error;
+    }
+  };
+  export const updatePost = async (id, name, name_en, content, content_en, image) => {
+    try {
+      const id_user = localStorage.getItem('user')
+      const author = localStorage.getItem('name')
+      const FormData = require('form-data');
+      let data = new FormData();
+      data.append('id_post', id);
+      if (typeof image == 'object' && image?.name) {
+        data.append('image', image, Date.now());
+      } else {
+        data.append('image', image);
+      }
+      data.append('name', name);
+      data.append('name_en', name_en);
+      data.append('content', content);
+      data.append('content_en', content_en);
+      data.append('author', author);
+      data.append('id_user', id_user);
+      if (checkTokenExpiration()) {
+        const new_token = await refreshToken()
+        api.defaults.headers.common['Authorization'] = `${new_token}`;
+        const response = await api.put('/post/update', data);
+        return response.data;
+      } else {
+        const response = await api.put('/post/update', data);
+        return response.data;
+      }
+    } catch (error) {
+      Swal.fire(
+        'Error',
+        'Đã có lỗi xãy ra',
+        'error'
+      )
+      throw error;
+    }
   }
-};
+  export const deletePost = async (id) => {
+    try {
+      if (checkTokenExpiration()) {
+        const new_token = await refreshToken()
+        api.defaults.headers.common['Authorization'] = `${new_token}`;
+        const response = await api.delete(`/post/delete/${id}`);
+        return response.data;
+      } else {
+        const response = await api.delete(`/post/delete/${id}`);
+        return response.data;
+      }
+    } catch (error) {
+      Swal.fire(
+        'Error',
+        'Đã có lỗi xãy ra',
+        'error'
+      )
+      throw error;
+    }
+  }
+
+  export const getProductGroups = async () => {
+    try {
+      const response = await api.get(`/group/list`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  export const getFeaturedProducts = async () => {
+    try {
+      const response = await api.get(`/product/list_featured`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  export const addProductGroup = async (name, detail, detail_en, is_use = 1) => {
+    try {
+      const data = {
+        name: name,
+        detail: detail || null,
+        detail_en: detail_en || null,
+        editable: 1,
+        is_use: is_use
+      };
+
+      if (checkTokenExpiration()) {
+        const new_token = await refreshToken()
+        api.defaults.headers.common['Authorization'] = `${new_token}`;
+        const response = await api.post('/group/add', data);
+        return response.data;
+      } else {
+        const response = await api.post('/group/add', data);
+        return response.data;
+      }
+    } catch (error) {
+      Swal.fire(
+        'Error',
+        'Đã có lỗi xãy ra',
+        'error'
+      )
+      throw error;
+    }
+  };
+
+  export const updateProductGroup = async (data) => {
+    try {
+      if (checkTokenExpiration()) {
+        const new_token = await refreshToken()
+        api.defaults.headers.common['Authorization'] = `${new_token}`;
+        const response = await api.put(`/group/update`, data);
+        return response.data;
+      } else {
+        const response = await api.put(`/group/update`, data);
+        return response.data;
+      }
+    } catch (error) {
+      Swal.fire(
+        'Error',
+        'Đã có lỗi xãy ra',
+        'error'
+      )
+      throw error;
+    }
+  };
+
+  export const deleteProductGroup = async (id) => {
+    try {
+      if (checkTokenExpiration()) {
+        const new_token = await refreshToken()
+        api.defaults.headers.common['Authorization'] = `${new_token}`;
+        const response = await api.delete(`/group/delete/${id}`);
+        return response.data;
+      } else {
+        const response = await api.delete(`/group/delete/${id}`);
+        return response.data;
+      }
+    } catch (error) {
+      Swal.fire(
+        'Error',
+        'Đã có lỗi xãy ra',
+        'error'
+      )
+      throw error;
+    }
+  };
