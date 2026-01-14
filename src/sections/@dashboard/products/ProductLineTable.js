@@ -213,7 +213,7 @@ export default function ProductLineTable({ groups, setUpdate, update }) {
                     <TableHead>
                         <TableRow>
                             <TableCell align="center">Sort</TableCell>
-                            <TableCell align="center">ID</TableCell>
+                            {/* <TableCell align="center">ID</TableCell> */}
                             <TableCell align="center">Name</TableCell>
                             <TableCell align="center">Active</TableCell>
                             <TableCell align="center">Action</TableCell>
@@ -223,15 +223,16 @@ export default function ProductLineTable({ groups, setUpdate, update }) {
                         {localGroups.map((group) => {
                             const isActive = isActiveGroup(group);
                             const activeIndex = getActiveIndex(group);
+                            // if(!group.editable) return <></>
                             return (
                                 <TableRow key={group.id_group} sx={{ opacity: isActive ? 1 : 0.5 }}>
                                     <TableCell align="center">
-                                        {isActive ? (
+                                        {isActive && group.editable ? (
                                             <Stack direction="row" justifyContent="center">
                                                 <IconButton size="small" onClick={() => handleMoveUp(activeIndex)} disabled={activeIndex === 0}>
                                                     <ArrowUpwardIcon fontSize="small" />
                                                 </IconButton>
-                                                <IconButton size="small" onClick={() => handleMoveDown(activeIndex)} disabled={activeIndex === activeGroups.length - 1}>
+                                                <IconButton size="small" onClick={() => handleMoveDown(activeIndex)} disabled={activeIndex === activeGroups.length - 2}>
                                                     <ArrowDownwardIcon fontSize="small" />
                                                 </IconButton>
                                             </Stack>
@@ -239,7 +240,7 @@ export default function ProductLineTable({ groups, setUpdate, update }) {
                                             <Typography variant="caption" color="text.secondary">—</Typography>
                                         )}
                                     </TableCell>
-                                    <TableCell align="center">{group.id_group}</TableCell>
+                                    {/* <TableCell align="center">{group.id_group}</TableCell> */}
                                     <TableCell align="center">{group.name}</TableCell>
                                     <TableCell align="center">
                                         {group.editable ? (
