@@ -40,7 +40,9 @@ export default function ProductLinesPage() {
 
         if (formValues) {
             const { name, detail, detail_en } = formValues;
-            const response = await addProductGroup(name, detail, detail_en);
+            // Set is_use = number of active groups + 1 (add to end of list)
+            const activeCount = productGroups.filter(g => g.is_use > 0).length;
+            const response = await addProductGroup(name, detail, detail_en, activeCount + 1);
             if (response.results?.status === 'success') {
                 Swal.fire('Success', 'Product line added successfully', 'success');
                 setUpdate(!update);

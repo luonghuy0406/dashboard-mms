@@ -25,27 +25,35 @@ export default function ProductLineTable({ groups, setUpdate, update }) {
     const [isChanged, setIsChanged] = useState(false);
 
     useEffect(() => {
-        setLocalGroups([...groups].sort((a, b) => a.order - b.order));
+        // Separate active (is_use > 0) and inactive (is_use === 0) groups
+        const activeGroups = groups.filter(g => g.is_use > 0);
+        const inactiveGroups = groups.filter(g => g.is_use === 0);
+        // Show active groups first (sorted by is_use), then inactive at the end
+        setLocalGroups([...activeGroups, ...inactiveGroups]);
         setIsChanged(false);
     }, [groups]);
 
+    // Get only active groups for reordering
+    const activeGroups = localGroups.filter(g => g.is_use > 0);
+    const inactiveGroups = localGroups.filter(g => g.is_use === 0);
+
     const handleMoveUp = (index) => {
         if (index === 0) return;
-        const newGroups = [...localGroups];
-        const temp = newGroups[index];
-        newGroups[index] = newGroups[index - 1];
-        newGroups[index - 1] = temp;
-        setLocalGroups(newGroups);
+        const newActiveGroups = [...activeGroups];
+        const temp = newActiveGroups[index];
+        newActiveGroups[index] = newActiveGroups[index - 1];
+        newActiveGroups[index - 1] = temp;
+        setLocalGroups([...newActiveGroups, ...inactiveGroups]);
         setIsChanged(true);
     };
 
     const handleMoveDown = (index) => {
-        if (index === localGroups.length - 1) return;
-        const newGroups = [...localGroups];
-        const temp = newGroups[index];
-        newGroups[index] = newGroups[index + 1];
-        newGroups[index + 1] = temp;
-        setLocalGroups(newGroups);
+        if (index === activeGroups.length - 1) return;
+        const newActiveGroups = [...activeGroups];
+        const temp = newActiveGroups[index];
+        newActiveGroups[index] = newActiveGroups[index + 1];
+        newActiveGroups[index + 1] = temp;
+        setLocalGroups([...newActiveGroups, ...inactiveGroups]);
         setIsChanged(true);
     };
 
@@ -59,13 +67,16 @@ export default function ProductLineTable({ groups, setUpdate, update }) {
         });
 
         try {
-            for (let i = 0; i < localGroups.length; i++) {
-                const group = localGroups[i];
-                // Only update if the order value has changed
-                if (group.order !== i) {
+            // For descending sort: position 0 = highest is_use, position n-1 = is_use = 1
+            const totalActive = activeGroups.length;
+            for (let i = 0; i < activeGroups.length; i++) {
+                const group = activeGroups[i];
+                const newIsUse = totalActive - i; // First item gets highest value
+                // Only update if the is_use value has changed
+                if (group.is_use !== newIsUse) {
                     const data = {
                         ...group,
-                        order: i+1
+                        is_use: newIsUse
                     };
                     await updateProductGroup(data);
                 }
@@ -86,14 +97,18 @@ export default function ProductLineTable({ groups, setUpdate, update }) {
             });
         }
 
+        // If unchecked: set is_use = 0 (inactive)
+        // If checked: set is_use = max(current is_use) + 1 to add to top of list
+        const maxIsUse = activeGroups.length > 0 ? Math.max(...activeGroups.map(g => g.is_use)) : 0;
+        const newIsUse = checked ? (maxIsUse + 1) : 0;
+
         const data = {
             id_group: group.id_group,
             name: group.name,
             detail: group.detail,
             detail_en: group.detail_en,
             editable: group.editable,
-            order: group.order,
-            is_use: checked ? 1 : 0
+            is_use: newIsUse
         };
 
         const response = await updateProductGroup(data);
@@ -138,8 +153,7 @@ export default function ProductLineTable({ groups, setUpdate, update }) {
                 detail: detail,
                 detail_en: detail_en,
                 editable: group.editable,
-                order: group.order,
-                is_use: group.is_use ? 1 : 0
+                is_use: group.is_use
             };
             const response = await updateProductGroup(data);
             if (response.results?.status === 'success') {
@@ -180,6 +194,10 @@ export default function ProductLineTable({ groups, setUpdate, update }) {
         }
     }
 
+    // Check if a group is in the active section for arrow controls
+    const isActiveGroup = (group) => group.is_use > 0;
+    const getActiveIndex = (group) => activeGroups.findIndex(g => g.id_group === group.id_group);
+
     return (
         <Card sx={{ mt: 3, mb: 3 }}>
             <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -197,36 +215,44 @@ export default function ProductLineTable({ groups, setUpdate, update }) {
                             <TableCell align="center">Sort</TableCell>
                             <TableCell align="center">ID</TableCell>
                             <TableCell align="center">Name</TableCell>
-                            {/* <TableCell align="center">Order</TableCell> */}
-                            <TableCell align="center">Is use</TableCell>
+                            <TableCell align="center">Active</TableCell>
                             <TableCell align="center">Action</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {localGroups.map((group, index) => (
-                            <TableRow key={group.id_group}>
-                                <TableCell align="center">
-                                    <Stack direction="row" justifyContent="center">
-                                        <IconButton size="small" onClick={() => handleMoveUp(index)} disabled={index === 0}>
-                                            <ArrowUpwardIcon fontSize="small" />
-                                        </IconButton>
-                                        <IconButton size="small" onClick={() => handleMoveDown(index)} disabled={index === localGroups.length - 1}>
-                                            <ArrowDownwardIcon fontSize="small" />
-                                        </IconButton>
-                                    </Stack>
-                                </TableCell>
-                                <TableCell align="center">{group.id_group}</TableCell>
-                                <TableCell align="center">{group.name}</TableCell>
-                                {/* <TableCell align="center">{group.order}</TableCell> */}
-                                <TableCell align="center">
-                                    <Switch
-                                        checked={group.is_use === 1 }
-                                        onChange={(e) => handleStatusChange(group, e.target.checked)}
-                                    />
-                                </TableCell>
-                                <TableCell align="center">
-                                {
-                                    group.editable ? (
+                        {localGroups.map((group) => {
+                            const isActive = isActiveGroup(group);
+                            const activeIndex = getActiveIndex(group);
+                            return (
+                                <TableRow key={group.id_group} sx={{ opacity: isActive ? 1 : 0.5 }}>
+                                    <TableCell align="center">
+                                        {isActive ? (
+                                            <Stack direction="row" justifyContent="center">
+                                                <IconButton size="small" onClick={() => handleMoveUp(activeIndex)} disabled={activeIndex === 0}>
+                                                    <ArrowUpwardIcon fontSize="small" />
+                                                </IconButton>
+                                                <IconButton size="small" onClick={() => handleMoveDown(activeIndex)} disabled={activeIndex === activeGroups.length - 1}>
+                                                    <ArrowDownwardIcon fontSize="small" />
+                                                </IconButton>
+                                            </Stack>
+                                        ) : (
+                                            <Typography variant="caption" color="text.secondary">—</Typography>
+                                        )}
+                                    </TableCell>
+                                    <TableCell align="center">{group.id_group}</TableCell>
+                                    <TableCell align="center">{group.name}</TableCell>
+                                    <TableCell align="center">
+                                        {group.editable ? (
+                                            <Switch
+                                                checked={group.is_use > 0}
+                                                onChange={(e) => handleStatusChange(group, e.target.checked)}
+                                            />
+                                        ) : (
+                                            <Typography variant="caption" color="text.secondary">Always Active</Typography>
+                                        )}
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        {group.editable ? (
                                             <Stack direction="row" spacing={1} justifyContent="center">
                                                 <IconButton size="small" color="primary" onClick={() => handleEdit(group)}>
                                                     <EditIcon fontSize="small" />
@@ -235,11 +261,11 @@ export default function ProductLineTable({ groups, setUpdate, update }) {
                                                     <DeleteIcon fontSize="small" />
                                                 </IconButton>
                                             </Stack>
-                                    ) : <></>
-                                }
-                            </TableCell>
-                        </TableRow>
-                        ))}
+                                        ) : <></>}
+                                    </TableCell>
+                                </TableRow>
+                            );
+                        })}
                     </TableBody>
                 </Table>
             </Box>

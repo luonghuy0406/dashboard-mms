@@ -628,15 +628,14 @@ export const getFeaturedProducts = async () => {
   }
 };
 
-export const addProductGroup = async (name, detail, detail_en) => {
+export const addProductGroup = async (name, detail, detail_en, is_use = 1) => {
   try {
     const data = {
       name: name,
       detail: detail || null,
       detail_en: detail_en || null,
       editable: 1,
-      order: 0,
-      is_use: 1
+      is_use: is_use
     };
 
     if (checkTokenExpiration()) {
