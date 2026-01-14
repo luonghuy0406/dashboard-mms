@@ -636,7 +636,7 @@ export const addProductGroup = async (name, detail, detail_en) => {
       detail_en: detail_en || null,
       editable: 1,
       order: 0,
-      active: true
+      is_use: 1
     };
 
     if (checkTokenExpiration()) {

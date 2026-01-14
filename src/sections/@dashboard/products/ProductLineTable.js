@@ -93,11 +93,12 @@ export default function ProductLineTable({ groups, setUpdate, update }) {
             detail_en: group.detail_en,
             editable: group.editable,
             order: group.order,
-            active: checked
+            is_use: checked ? 1 : 0
         };
 
         const response = await updateProductGroup(data);
         if (response.results?.status === 'success') {
+            Swal.fire('Thành công', 'Đã cập nhật thông tin.', 'success');
             setUpdate(!update);
         }
     };
@@ -138,7 +139,7 @@ export default function ProductLineTable({ groups, setUpdate, update }) {
                 detail_en: detail_en,
                 editable: group.editable,
                 order: group.order,
-                active: group.active
+                is_use: group.is_use ? 1 : 0
             };
             const response = await updateProductGroup(data);
             if (response.results?.status === 'success') {
@@ -197,7 +198,7 @@ export default function ProductLineTable({ groups, setUpdate, update }) {
                             <TableCell align="center">ID</TableCell>
                             <TableCell align="center">Name</TableCell>
                             {/* <TableCell align="center">Order</TableCell> */}
-                            <TableCell align="center">Status</TableCell>
+                            <TableCell align="center">Is use</TableCell>
                             <TableCell align="center">Action</TableCell>
                         </TableRow>
                     </TableHead>
@@ -219,21 +220,25 @@ export default function ProductLineTable({ groups, setUpdate, update }) {
                                 {/* <TableCell align="center">{group.order}</TableCell> */}
                                 <TableCell align="center">
                                     <Switch
-                                        checked={group.active === 1 || group.active === true}
+                                        checked={group.is_use === 1 }
                                         onChange={(e) => handleStatusChange(group, e.target.checked)}
                                     />
                                 </TableCell>
                                 <TableCell align="center">
-                                    <Stack direction="row" spacing={1} justifyContent="center">
-                                        <IconButton size="small" color="primary" onClick={() => handleEdit(group)}>
-                                            <EditIcon fontSize="small" />
-                                        </IconButton>
-                                        <IconButton size="small" color="error" onClick={() => handleDelete(group)}>
-                                            <DeleteIcon fontSize="small" />
-                                        </IconButton>
-                                    </Stack>
-                                </TableCell>
-                            </TableRow>
+                                {
+                                    group.editable ? (
+                                            <Stack direction="row" spacing={1} justifyContent="center">
+                                                <IconButton size="small" color="primary" onClick={() => handleEdit(group)}>
+                                                    <EditIcon fontSize="small" />
+                                                </IconButton>
+                                                <IconButton size="small" color="error" onClick={() => handleDelete(group)}>
+                                                    <DeleteIcon fontSize="small" />
+                                                </IconButton>
+                                            </Stack>
+                                    ) : <></>
+                                }
+                            </TableCell>
+                        </TableRow>
                         ))}
                     </TableBody>
                 </Table>
